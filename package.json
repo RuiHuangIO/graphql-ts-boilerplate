@@ -9,8 +9,8 @@
    },
    "dependencies": {
       "typeorm": "0.2.7",
-      "reflect-metadata": "^0.1.10",
-      "pg": "^7.3.0"
+      "reflect-metadata": "^0.1.12",
+      "pg": "^7.5.0"
    },
    "scripts": {
       "start": "ts-node src/index.ts"
