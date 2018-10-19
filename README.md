@@ -6,7 +6,7 @@ A Graphql-TypeScript server I hope to use for my further developments.
 - Learn TypeORM
 - Setting up TypeScript
 - Try GraphQL-Yoga
-- Lear Jest
+- Learn Jest
 
 ## Tech:
 
