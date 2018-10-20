@@ -1,10 +1,19 @@
 import { request } from "graphql-request";
-import { host } from "./constants";
 import { User } from "../src/entity/User";
-import { createTypeormConn } from "../src/utils/createTypeormConn";
+import { startServer } from "../src/startServer";
+
+let getHost = () => "";
+
+interface AddressInfo {
+  address: string;
+  family: string;
+  port: number;
+}
 
 beforeAll(async () => {
-  await createTypeormConn();
+  const app = await startServer();
+  const { port } = app.address() as AddressInfo;
+  getHost = () => `http://127.0.0.1:${port}`;
 });
 
 const email = "mochi@ruihuang.io";
@@ -17,7 +26,7 @@ mutation{
 `;
 
 test("Register user", async () => {
-  const response = await request(host, mutation);
+  const response = await request(getHost(), mutation);
   expect(response).toEqual({ register: true });
   const users = await User.find({ where: { email } });
   expect(users).toHaveLength(1);
@@ -25,9 +34,3 @@ test("Register user", async () => {
   expect(user.email).toEqual(email);
   expect(user.password).not.toEqual(password);
 });
-
-/*
-TODO:
-3. yarn test should start the server
-4. test shouldn't create connection√
-*/
