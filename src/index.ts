@@ -6,9 +6,13 @@ import * as path from "path";
 // use this to resolve the problem with paths when using importSchema
 import { createConnection } from "typeorm";
 
-const typeDefs = importSchema(path.join(__dirname, "./schema.graphql"));
+export const startServer = async () => {
+  const typeDefs = importSchema(path.join(__dirname, "./schema.graphql"));
 
-const server = new GraphQLServer({ typeDefs, resolvers });
-createConnection().then(() => {
-  server.start(() => console.log("Server is running on localhost:4000"));
-});
+  const server = new GraphQLServer({ typeDefs, resolvers });
+  await createConnection();
+  await server.start();
+  console.log("Server is running on localhost:4000");
+};
+
+startServer();
