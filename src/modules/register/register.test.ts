@@ -1,6 +1,12 @@
 import { request } from "graphql-request";
 import { startServer } from "../../startServer";
 import { User } from "../../entity/User";
+import {
+  emailTaken,
+  emailTooShort,
+  invlidEmail,
+  passwordTooShort
+} from "./errorMessages";
 
 let getHost = () => "";
 
@@ -19,9 +25,9 @@ beforeAll(async () => {
 const email = "mochi@ruihuang.io";
 const password = "123456";
 
-const mutation = `
+const mutation = (e: string, p: string) => `
 mutation{
-  register(email:"${email}", password:"${password}"){
+  register(email:"${e}", password:"${p}"){
     path
     message
   }
@@ -29,7 +35,8 @@ mutation{
 `;
 
 test("Register user", async () => {
-  const response = await request(getHost(), mutation);
+  // check for success registration
+  const response = await request(getHost(), mutation(email, password));
   expect(response).toEqual({ register: null });
   const users = await User.find({ where: { email } });
   expect(users).toHaveLength(1);
@@ -37,16 +44,61 @@ test("Register user", async () => {
   expect(user.email).toEqual(email);
   expect(user.password).not.toEqual(password);
 
-  const secondResponse: any = await request(getHost(), mutation);
+  // test for duplicate email
+  const secondResponse: any = await request(
+    getHost(),
+    mutation(email, password)
+  );
   expect(secondResponse.register).toHaveLength(1);
-  expect(secondResponse.register[0].path).toEqual("email");
-  // expect(secondResponse).toEqual({
-  //   register: [
-  //     {
-  //       path: "email",
-  //       message: "Email is already used"
-  //     }
-  //   ]
-  // });
-  // We don't want above because changing message will fail the test.
+  expect(secondResponse.register[0]).toEqual({
+    path: "email",
+    message: emailTaken
+  });
+
+  // catch bad email
+  const ThirdResponse: any = await request(getHost(), mutation("b", password));
+  expect(ThirdResponse).toEqual({
+    register: [
+      {
+        path: "email",
+        message: emailTooShort
+      },
+      {
+        path: "email",
+        message: invlidEmail
+      }
+    ]
+  });
+
+  // check for valid password
+
+  const FourthResponse: any = await request(getHost(), mutation(email, "ab"));
+  expect(FourthResponse).toEqual({
+    register: [
+      {
+        path: "password",
+        message: passwordTooShort
+      }
+    ]
+  });
+
+  // check for both email and password
+
+  const FifthResponse: any = await request(getHost(), mutation("ab", "ab"));
+  expect(FifthResponse).toEqual({
+    register: [
+      {
+        path: "email",
+        message: emailTooShort
+      },
+      {
+        path: "email",
+        message: invlidEmail
+      },
+      {
+        path: "password",
+        message: passwordTooShort
+      }
+    ]
+  });
 });
