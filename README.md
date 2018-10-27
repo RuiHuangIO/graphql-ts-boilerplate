@@ -1,4 +1,4 @@
-A Graphql-TypeScript server I hope to use for my further developments.
+A Graphql-TypeScript server I hope to use for my further projects.
 
 ## Goals:
 
@@ -7,6 +7,7 @@ A Graphql-TypeScript server I hope to use for my further developments.
 - Setting up TypeScript
 - Try GraphQL-Yoga
 - Learn Jest
+- Learn Redis
 
 ## Tech:
 
