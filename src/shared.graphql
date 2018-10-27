@@ -1,0 +1,6 @@
+# GraphQL we want to share across schemas
+
+type Error {
+  path: String!
+  message: String!
+}

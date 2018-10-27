@@ -1,28 +1,18 @@
-import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  BeforeInsert,
-  BaseEntity
-} from "typeorm";
-import * as uuidv4 from "uuid/v4";
+import { Entity, Column, BaseEntity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("users")
 export class User extends BaseEntity {
-  @PrimaryColumn("uuid")
+  @PrimaryGeneratedColumn("uuid")
   id: string;
   // use string so it's not guessable
 
   @Column("varchar", { length: 255 })
   email: string;
   // good to have max length
+  // we can add "unique: true" here to do error check,
+  // but this is less flexible when we want to allow email null
 
   @Column("text")
   password: string;
   // using text since we are going to hash
-
-  @BeforeInsert()
-  addId() {
-    this.id = uuidv4();
-  }
 }
