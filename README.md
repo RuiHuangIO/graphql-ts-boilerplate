@@ -16,3 +16,4 @@ A Graphql-TypeScript server I hope to use for my further projects.
 - TypeScript
 - TypeORM
 - Jest
+- Redis

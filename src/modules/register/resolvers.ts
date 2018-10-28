@@ -10,9 +10,8 @@ import {
   invlidEmail,
   passwordTooShort
 } from "./errorMessages";
-import { createConfirmEmailLink } from "../../utils/createConfirmEmailLink";
-import { sendEmail } from "../../utils/sendEmail";
-import { v4 } from "uuid";
+// import { createConfirmEmailLink } from "../../utils/createConfirmEmailLink";
+// import { sendEmail } from "../../utils/sendEmail";
 
 const schema = yup.object().shape({
   email: yup
@@ -34,8 +33,8 @@ export const resolvers: ResolverMap = {
   Mutation: {
     register: async (
       _,
-      args: GQL.IRegisterOnMutationArguments,
-      { redis, url }
+      args: GQL.IRegisterOnMutationArguments
+      // { redis, url }
     ) => {
       try {
         await schema.validate(args, { abortEarly: false });
@@ -59,18 +58,17 @@ export const resolvers: ResolverMap = {
       }
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = User.create({
-        id: v4(),
         email,
         password: hashedPassword
       });
       await user.save();
 
-      if (process.env.NODE_ENV !== "test") {
-        await sendEmail(
-          email,
-          await createConfirmEmailLink(url, user.id, redis)
-        );
-      }
+      // if (process.env.NODE_ENV !== "test") {
+      //   await sendEmail(
+      //     email,
+      //     await createConfirmEmailLink(url, user.id, redis)
+      //   );
+      // }
 
       return null;
     }
