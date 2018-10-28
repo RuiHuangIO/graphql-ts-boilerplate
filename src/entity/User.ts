@@ -15,4 +15,7 @@ export class User extends BaseEntity {
   @Column("text")
   password: string;
   // using text since we are going to hash
+
+  @Column("boolean", { default: false })
+  confirmed: boolean;
 }
