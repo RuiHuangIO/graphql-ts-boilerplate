@@ -4,6 +4,7 @@ import { request } from "graphql-request";
 import { loginError, unconfirmedEmail } from "./errorMessage";
 import { User } from "../../entity/User";
 import { createTypeormConn } from "../../utils/createTypeormConn";
+import { Connection } from "typeorm";
 
 const email = "mochi@ruihuang.io";
 const password = "123456";
@@ -26,10 +27,15 @@ mutation{
 }
 `;
 
+let conn: Connection;
+
 beforeAll(async () => {
-  await createTypeormConn();
+  conn = await createTypeormConn();
 });
 
+afterAll(async () => {
+  conn.close();
+});
 // Make error logging in as a function, with parameters e(email), p(password), errMsg(expected error message)
 
 const loginExpectError = async (e: string, p: string, errMsg: string) => {
